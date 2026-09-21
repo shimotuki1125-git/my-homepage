@@ -1,0 +1,340 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+	getCollection,
+	render
+} from 'astro:content';
+
+
+export async function getStaticPaths() {
+
+	const posts =
+		await getCollection('blog');
+
+
+	return posts.map((post) => ({
+
+		params: {
+			id: post.id
+		},
+
+		props: {
+			post
+		}
+
+	}));
+}
+
+
+const { post } = Astro.props;
+
+const { Content } =
+	await render(post);
+---
+
+<Layout title={post.data.title}>
+
+	<article>
+
+		<!-- ブログ一覧へ戻る -->
+		<a
+			href="/blog"
+			class="back"
+		>
+			← Blog
+		</a>
+
+
+		<header class="article-header">
+
+			<div class="article-meta">
+
+				<time>
+					{post.data.pubDate.toLocaleDateString('ja-JP')}
+				</time>
+
+				{post.data.category && (
+					<span class="category">
+						{post.data.category}
+					</span>
+				)}
+
+			</div>
+
+
+			<h1>
+				{post.data.title}
+			</h1>
+
+		</header>
+
+
+		<div class="article-body">
+			<Content />
+		</div>
+
+	</article>
+
+</Layout>
+
+
+<style>
+
+	.back {
+		display: inline-block;
+
+		margin-bottom: 2rem;
+
+		color: var(--ginkgo);
+
+		font-size: 0.8rem;
+
+		text-decoration: none;
+
+		letter-spacing: 0.08em;
+
+		transition:
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+
+	.back:hover {
+		color: var(--gold);
+
+		transform:
+			translateX(-3px);
+	}
+
+
+	.article-header {
+		margin-bottom: 3.5rem;
+
+		padding-bottom: 2rem;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.article-meta {
+		display: flex;
+
+		align-items: center;
+
+		flex-wrap: wrap;
+
+		gap: 0.8rem;
+
+		margin-bottom: 1rem;
+
+		color: var(--text-muted);
+
+		font-size: 0.78rem;
+	}
+
+
+	.category {
+		padding:
+			0.05rem 0.5rem;
+
+		color: var(--ginkgo);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 999px;
+	}
+
+
+	.article-header h1 {
+		max-width: 760px;
+
+		margin: 0;
+
+		color: var(--text);
+
+		font-size:
+			clamp(
+				2.2rem,
+				6vw,
+				3.8rem
+			);
+
+		font-weight: 500;
+
+		line-height: 1.4;
+
+		letter-spacing: 0.08em;
+	}
+
+
+	.article-body {
+		max-width: 720px;
+
+		margin: 0 auto;
+	}
+
+
+	.article-body :global(p) {
+		margin:
+			0 0 1.8rem;
+
+		color: var(--text-soft);
+
+		font-size: 0.98rem;
+
+		line-height: 2.1;
+	}
+
+
+	.article-body :global(h2) {
+		margin:
+			4rem 0 1.5rem;
+
+		padding:
+			0 0 0.6rem;
+
+		color: var(--text);
+
+		font-size: 1.5rem;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.article-body :global(h2)::before {
+		content: "◆";
+
+		margin-right: 0.6rem;
+
+		color: var(--orange);
+
+		font-size: 0.55em;
+	}
+
+
+	.article-body :global(h3) {
+		margin:
+			2.8rem 0 1rem;
+
+		color: var(--ginkgo);
+
+		font-size: 1.15rem;
+	}
+
+
+	.article-body :global(a) {
+		color: var(--gold);
+	}
+
+
+	.article-body :global(a:hover) {
+		color: var(--ginkgo);
+	}
+
+
+	.article-body :global(ul),
+	.article-body :global(ol) {
+		margin:
+			1.5rem 0;
+
+		padding-left: 1.6rem;
+
+		color: var(--text-soft);
+
+		line-height: 2;
+	}
+
+
+	.article-body :global(code) {
+		padding:
+			0.15rem 0.4rem;
+
+		color: var(--gold);
+
+		background: var(--bg-hover);
+
+		border-radius: 4px;
+	}
+
+
+	.article-body :global(pre) {
+		overflow-x: auto;
+
+		margin:
+			2rem 0;
+
+		padding: 1.2rem;
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border);
+
+		border-radius: 6px;
+	}
+
+
+	.article-body :global(pre code) {
+		padding: 0;
+
+		color: var(--text);
+
+		background: transparent;
+	}
+
+
+	.article-body :global(blockquote) {
+		margin:
+			2rem 0;
+
+		padding:
+			0.6rem 0 0.6rem 1.3rem;
+
+		color: var(--text-soft);
+
+		background: transparent;
+
+		border-left:
+			2px solid var(--orange);
+	}
+
+
+	.article-body :global(hr) {
+		width: 100px;
+		height: 1px;
+
+		margin:
+			3.5rem auto;
+
+		border: none;
+
+		background:
+			linear-gradient(
+				90deg,
+				transparent,
+				var(--ginkgo),
+				transparent
+			);
+	}
+
+	@media (max-width: 700px) {
+
+		.article-header {
+			margin-bottom: 2.5rem;
+		}
+
+
+		.article-header h1 {
+			font-size: 2.2rem;
+		}
+
+
+		.article-body :global(p) {
+			font-size: 0.93rem;
+		}
+
+	}
+</style>

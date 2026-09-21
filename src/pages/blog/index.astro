@@ -1,0 +1,508 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+
+
+const posts = (
+	await getCollection('blog')
+).sort(
+	(a, b) =>
+		b.data.pubDate.valueOf() -
+		a.data.pubDate.valueOf()
+);
+
+
+const categories = [
+	...new Set(
+		posts
+			.map((post) => post.data.category)
+			.filter(Boolean)
+	)
+];
+---
+
+<Layout title="Blog">
+
+	<section class="blog-header">
+
+		<p class="subtitle">
+			BLOG
+		</p>
+
+		<h1>
+			Blog
+		</h1>
+
+		<p>
+			日々の出来事を記録する予定
+		</p>
+
+	</section>
+
+
+	<div class="category-filter">
+
+		<button
+			class="filter-button active"
+			data-category="all"
+		>
+			すべて
+		</button>
+
+
+		{categories.map((category) => (
+
+			<button
+				class="filter-button"
+				data-category={category}
+			>
+				{category}
+			</button>
+
+		))}
+
+	</div>
+
+
+
+	<section class="blog-list">
+
+		{posts.map((post) => (
+
+			<a
+				class="blog-card"
+				href={`/blog/${post.id}`}
+				data-post-category={post.data.category ?? ''}
+			>
+
+				<div class="blog-meta">
+
+					<time>
+						{post.data.pubDate.toLocaleDateString('ja-JP')}
+					</time>
+
+
+					{post.data.category && (
+
+						<span class="category">
+							{post.data.category}
+						</span>
+
+					)}
+
+				</div>
+
+
+				<h2>
+					{post.data.title}
+				</h2>
+
+
+				<p>
+					{post.data.description}
+				</p>
+
+
+				<span class="read-more">
+					Read more →
+				</span>
+
+			</a>
+
+		))}
+
+	</section>
+
+
+	<!-- 記事が0件のとき -->
+	<p
+		id="noPosts"
+		class="no-posts"
+		hidden
+	>
+		このカテゴリの記事はまだありません。
+	</p>
+
+</Layout>
+
+
+<script>
+	const filterButtons =
+		document.querySelectorAll<HTMLButtonElement>(
+			'.filter-button'
+		);
+
+	const blogCards =
+		document.querySelectorAll<HTMLElement>(
+			'.blog-card'
+		);
+
+	const noPosts =
+		document.getElementById('noPosts');
+
+
+	filterButtons.forEach((button) => {
+
+		button.addEventListener(
+			'click',
+			() => {
+
+				const selectedCategory =
+					button.dataset.category;
+
+
+
+				filterButtons.forEach(
+					(item) => {
+						item.classList.remove('active');
+					}
+				);
+
+
+				button.classList.add('active');
+
+
+				let visibleCount = 0;
+
+
+				blogCards.forEach((card) => {
+
+					const postCategory =
+						card.dataset.postCategory;
+
+
+					const shouldShow =
+						selectedCategory === 'all' ||
+						postCategory === selectedCategory;
+
+
+					if (shouldShow) {
+
+						card.hidden = false;
+
+						visibleCount++;
+
+					} else {
+
+						card.hidden = true;
+
+					}
+
+				});
+
+
+				if (noPosts) {
+
+					noPosts.hidden =
+						visibleCount !== 0;
+
+				}
+
+			}
+		);
+
+	});
+</script>
+
+
+<style>
+
+	.blog-header {
+		margin-bottom: 3.5rem;
+
+		padding-bottom: 2rem;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.subtitle {
+		margin:
+			0 0 0.6rem;
+
+		color: var(--orange);
+
+		font-size: 0.7rem;
+
+		letter-spacing: 0.3em;
+	}
+
+
+	.blog-header h1 {
+		margin:
+			0 0 1rem;
+
+		color: var(--text);
+
+		font-size:
+			clamp(
+				2.5rem,
+				6vw,
+				4rem
+			);
+
+		font-weight: 500;
+
+		letter-spacing: 0.12em;
+	}
+
+
+	.blog-header > p:last-child {
+		max-width: 560px;
+
+		margin: 0;
+
+		color: var(--text-soft);
+
+		font-size: 0.9rem;
+
+		line-height: 2;
+	}
+
+
+	.category-filter {
+		display: flex;
+
+		flex-wrap: wrap;
+
+		gap: 0.7rem;
+
+		margin-bottom: 2.5rem;
+	}
+
+
+	.filter-button {
+		padding:
+			0.4rem 1rem;
+
+		color: var(--text-muted);
+
+		background: transparent;
+
+		border:
+			1px solid var(--border);
+
+		border-radius: 999px;
+
+		font-family:
+			"Shippori Mincho",
+			serif;
+
+		font-size: 0.8rem;
+
+		cursor: pointer;
+
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+
+	.filter-button:hover {
+		color: var(--gold);
+
+		border-color: var(--ginkgo);
+	}
+
+
+	.filter-button.active {
+		color: #fff8eb;
+
+		background: var(--maple);
+
+		border-color: var(--maple);
+	}
+
+
+	.blog-list {
+		display: flex;
+
+		flex-direction: column;
+	}
+
+
+	.blog-card {
+		display: block;
+
+		position: relative;
+
+		padding:
+			1.7rem 0;
+
+		color: inherit;
+
+		text-decoration: none;
+
+		background: transparent;
+
+		border-bottom:
+			1px solid var(--border);
+
+		transition:
+			padding-left 0.25s ease,
+			border-color 0.25s ease;
+	}
+
+
+	.blog-card:first-child {
+		border-top:
+			1px solid var(--border);
+	}
+
+
+	.blog-card:hover {
+		padding-left: 0.8rem;
+
+		border-color: var(--orange);
+	}
+
+
+	.blog-card[hidden] {
+		display: none;
+	}
+
+
+	.blog-card::before {
+		content: "";
+
+		position: absolute;
+
+		top: 1.7rem;
+		left: 0;
+
+		width: 2px;
+		height: 0;
+
+		background:
+			linear-gradient(
+				to bottom,
+				var(--ginkgo),
+				var(--orange),
+				var(--maple)
+			);
+
+		transition:
+			height 0.25s ease;
+	}
+
+
+	.blog-card:hover::before {
+		height: calc(100% - 3.4rem);
+	}
+
+
+	.blog-meta {
+		display: flex;
+
+		align-items: center;
+
+		flex-wrap: wrap;
+
+		gap: 0.8rem;
+
+		margin-bottom: 0.65rem;
+
+		color: var(--text-muted);
+
+		font-size: 0.75rem;
+	}
+
+
+	.category {
+		padding:
+			0.05rem 0.5rem;
+
+		color: var(--ginkgo);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 999px;
+	}
+
+
+	.blog-card h2 {
+		margin:
+			0 0 0.6rem;
+
+		color: var(--text);
+
+		font-size: 1.35rem;
+
+		font-weight: 500;
+
+		transition:
+			color 0.2s ease;
+	}
+
+
+	.blog-card:hover h2 {
+		color: var(--gold);
+	}
+
+
+	.blog-card p {
+		max-width: 650px;
+
+		margin:
+			0 0 0.8rem;
+
+		color: var(--text-soft);
+
+		font-size: 0.88rem;
+
+		line-height: 1.8;
+	}
+
+
+	.read-more {
+		color: var(--ginkgo);
+
+		font-size: 0.78rem;
+
+		letter-spacing: 0.04em;
+	}
+
+
+	.no-posts {
+		padding: 3rem 0;
+
+		text-align: center;
+
+		color: var(--text-muted);
+	}
+
+
+	@media (max-width: 700px) {
+
+		.blog-header {
+			margin-bottom: 2.5rem;
+		}
+
+
+		.blog-header h1 {
+			font-size: 2.5rem;
+		}
+
+
+		.blog-card {
+			padding:
+				1.4rem 0;
+		}
+
+
+		.blog-card::before {
+			top: 1.4rem;
+		}
+
+
+		.blog-card:hover::before {
+			height:
+				calc(100% - 2.8rem);
+		}
+
+	}
+</style>

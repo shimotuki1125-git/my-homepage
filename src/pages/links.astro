@@ -1,0 +1,333 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const links = [
+	{
+		title: 'GitHub',
+		description: '制作したプログラムやソースコード。',
+		url: 'https://github.com/ユーザー名',
+		label: 'GitHub'
+	},
+	{
+		title: 'X',
+		description: '日常の瞬間的な気持ちを記録している',
+		url: 'https://x.com/NOVEMBER1570504',
+		label: 'X'
+	},
+	{
+		title: '',
+		description: '随時追加予定',
+		url: '',
+		label: ''
+	}
+];
+---
+
+<Layout title="Links">
+
+	<section class="links-header">
+
+		<p class="page-label">
+			LINKS
+		</p>
+
+		<h1>
+			Links
+		</h1>
+
+		<p>
+			関連するサイトや相互リンク
+		</p>
+
+	</section>
+
+
+	<section class="links-list">
+
+		{links.map((link) => (
+
+			<a
+				href={link.url}
+				class="link-card"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+
+				<div class="link-content">
+
+					<p class="link-label">
+						{link.label}
+					</p>
+
+					<h2>
+						{link.title}
+					</h2>
+
+					<p class="description">
+						{link.description}
+					</p>
+
+				</div>
+
+
+				<span class="arrow">
+					↗
+				</span>
+
+			</a>
+
+		))}
+
+	</section>
+
+</Layout>
+
+
+<style>
+
+	.links-header {
+		margin-bottom: 3.5rem;
+
+		padding-bottom: 2rem;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.page-label {
+		margin:
+			0 0 0.6rem;
+
+		color: var(--orange);
+
+		font-size: 0.7rem;
+
+		letter-spacing: 0.3em;
+	}
+
+
+	.links-header h1 {
+		margin:
+			0 0 1rem;
+
+		color: var(--text);
+
+		font-size:
+			clamp(
+				2.5rem,
+				6vw,
+				4rem
+			);
+
+		font-weight: 500;
+
+		letter-spacing: 0.12em;
+	}
+
+
+	.links-header > p:last-child {
+		max-width: 560px;
+
+		margin: 0;
+
+		color: var(--text-soft);
+
+		font-size: 0.9rem;
+
+		line-height: 2;
+	}
+
+
+	.links-list {
+		display: flex;
+
+		flex-direction: column;
+	}
+
+
+	.link-card {
+		display: flex;
+
+		align-items: center;
+
+		justify-content: space-between;
+
+		gap: 2rem;
+
+		position: relative;
+
+		padding:
+			1.7rem 0;
+
+		color: inherit;
+
+		text-decoration: none;
+
+		background: transparent;
+
+		border-bottom:
+			1px solid var(--border);
+
+		transition:
+			padding-left 0.25s ease,
+			border-color 0.25s ease;
+	}
+
+
+	.link-card:first-child {
+		border-top:
+			1px solid var(--border);
+	}
+
+
+	.link-card:hover {
+		padding-left: 0.8rem;
+
+		border-color: var(--orange);
+	}
+
+
+	.link-card::before {
+		content: "";
+
+		position: absolute;
+
+		top: 1.7rem;
+		left: 0;
+
+		width: 2px;
+		height: 0;
+
+		background:
+			linear-gradient(
+				to bottom,
+				var(--ginkgo),
+				var(--orange),
+				var(--maple)
+			);
+
+		transition:
+			height 0.25s ease;
+	}
+
+
+	.link-card:hover::before {
+		height:
+			calc(100% - 3.4rem);
+	}
+
+
+	.link-content {
+		min-width: 0;
+
+		max-width: 650px;
+	}
+
+
+	.link-label {
+		margin:
+			0 0 0.35rem;
+
+		color: var(--text-muted);
+
+		font-size: 0.68rem;
+
+		letter-spacing: 0.18em;
+
+		text-transform: uppercase;
+	}
+
+
+	.link-card h2 {
+		margin:
+			0 0 0.45rem;
+
+		color: var(--text);
+
+		font-size: 1.35rem;
+
+		font-weight: 500;
+
+		transition:
+			color 0.2s ease;
+	}
+
+
+	.link-card:hover h2 {
+		color: var(--gold);
+	}
+
+
+	.description {
+		margin: 0;
+
+		color: var(--text-soft);
+
+		font-size: 0.88rem;
+
+		line-height: 1.8;
+	}
+
+
+	.arrow {
+		flex-shrink: 0;
+
+		color: var(--ginkgo);
+
+		font-size: 1.2rem;
+
+		transition:
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+
+	.link-card:hover .arrow {
+		color: var(--gold);
+
+		transform:
+			translate(
+				4px,
+				-4px
+			);
+	}
+
+
+	@media (max-width: 700px) {
+
+		.links-header {
+			margin-bottom: 2.5rem;
+		}
+
+
+		.links-header h1 {
+			font-size: 2.5rem;
+		}
+
+
+		.link-card {
+			gap: 1rem;
+
+			padding:
+				1.4rem 0;
+		}
+
+
+		.link-card::before {
+			top: 1.4rem;
+		}
+
+
+		.link-card:hover::before {
+			height:
+				calc(100% - 2.8rem);
+		}
+
+
+		.link-card h2 {
+			font-size: 1.2rem;
+		}
+
+	}
+</style>

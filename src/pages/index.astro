@@ -1,0 +1,520 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Timeline from '../components/Timeline.astro';
+import HomeIntro from '../components/HomeIntro.astro';
+
+import { getCollection } from 'astro:content';
+
+const latestPosts = (
+	await getCollection('blog')
+)
+	.sort(
+		(a, b) =>
+			b.data.pubDate.valueOf() -
+			a.data.pubDate.valueOf()
+	)
+	.slice(0, 3);
+---
+
+<Layout title="Home">
+
+	<HomeIntro />
+
+	<!-- =========================
+	     Top
+	========================= -->
+
+	<section class="hero">
+
+	<p class="hero-label">
+		SHIGUREROKU
+	</p>
+
+	<h1>
+	時雨録
+	</h1>
+
+	<p class="hero-description">
+		大学生活を記録する個人サイト
+	</p>
+
+	<div class="hero-line"></div>
+
+</section>
+
+
+	<!-- =========================
+	     Latest Posts
+	========================= -->
+
+	<section class="home-section">
+
+		<div class="section-header">
+
+			<div class="section-title">
+
+				<p class="section-label">
+					LATEST
+				</p>
+
+				<h2>
+					Latest Posts
+				</h2>
+
+			</div>
+
+
+			<a
+				href="/blog"
+				class="section-link"
+			>
+				記事一覧 →
+			</a>
+
+		</div>
+
+
+		<div class="post-list">
+
+			{latestPosts.map((post) => (
+
+				<a
+					href={`/blog/${post.id}`}
+					class="post-card"
+				>
+
+					<div class="post-meta">
+
+						<time>
+							{post.data.pubDate.toLocaleDateString('ja-JP')}
+						</time>
+
+
+						{post.data.category && (
+
+							<span class="category">
+								{post.data.category}
+							</span>
+
+						)}
+
+					</div>
+
+
+					<h3>
+						{post.data.title}
+					</h3>
+
+
+					<p>
+						{post.data.description}
+					</p>
+
+
+					<span class="read-more">
+						Read more →
+					</span>
+
+				</a>
+
+			))}
+
+		</div>
+
+	</section>
+
+
+	<!-- =========================
+	     Timeline
+	========================= -->
+
+	<section class="home-section">
+
+		<div class="section-header">
+
+			<div class="section-title">
+
+				<p class="section-label">
+					HISTORY
+				</p>
+
+				<h2>
+					Timeline
+				</h2>
+
+			</div>
+
+		</div>
+
+
+		<div class="timeline-area">
+			<Timeline />
+		</div>
+
+	</section>
+
+</Layout>
+
+
+<style>
+
+	.hero {
+		min-height: 340px;
+
+		display: flex;
+
+		flex-direction: column;
+
+		justify-content: center;
+
+		padding:
+			2rem 0 4rem;
+
+		position: relative;
+	}
+
+
+	.hero-label {
+		margin:
+			0 0 0.8rem;
+
+		color: var(--ginkgo);
+
+		font-size: 0.75rem;
+
+		letter-spacing: 0.35em;
+	}
+
+
+	.hero h1 {
+		margin: 0;
+
+		font-size:
+			clamp(
+				3.5rem,
+				9vw,
+				6rem
+			);
+
+		font-weight: 600;
+
+		line-height: 1.2;
+
+		letter-spacing: 0.16em;
+
+		color: var(--text);
+	}
+
+
+	.hero-description {
+		margin:
+			1.3rem 0 0;
+
+		color: var(--gold);
+
+		font-family:
+			"Shippori Mincho",
+			"Yu Mincho",
+			serif;
+
+		font-size: 1.1rem;
+
+		letter-spacing: 0.12em;
+	}
+
+
+	.hero-sub {
+		max-width: 520px;
+
+		margin:
+			1.2rem 0 0;
+
+		color: var(--text-muted);
+
+		font-size: 0.9rem;
+
+		line-height: 2;
+	}
+
+	.hero::after {
+		content: "";
+
+		width: 120px;
+		height: 1px;
+
+		margin-top: 2rem;
+
+		background:
+			linear-gradient(
+				90deg,
+				var(--maple),
+				var(--orange),
+				var(--ginkgo),
+				transparent
+			);
+	}
+
+
+
+	/* 共通 */
+
+	.home-section {
+		margin-top: 5rem;
+	}
+
+
+	.section-header {
+		display: flex;
+
+		align-items: flex-end;
+
+		justify-content: space-between;
+
+		gap: 1rem;
+
+		margin-bottom: 1.8rem;
+	}
+
+
+	.section-title {
+		min-width: 0;
+	}
+
+
+	.section-label {
+		margin:
+			0 0 0.25rem;
+
+		color: var(--orange);
+
+		font-size: 0.7rem;
+
+		letter-spacing: 0.25em;
+	}
+
+
+	.section-header h2 {
+		margin: 0;
+
+		font-size: 1.7rem;
+	}
+
+
+	.section-link {
+		flex-shrink: 0;
+
+		color: var(--ginkgo);
+
+		font-size: 0.85rem;
+
+		text-decoration: none;
+
+		transition:
+			color 0.2s ease,
+			transform 0.2s ease;
+	}
+
+
+	.section-link:hover {
+		color: var(--gold);
+
+		transform:
+			translateX(3px);
+	}
+
+
+	.post-list {
+		display: grid;
+
+		grid-template-columns:
+			repeat(
+				3,
+				minmax(0, 1fr)
+			);
+
+		gap: 1rem;
+	}
+
+
+	.post-card {
+		display: flex;
+
+		flex-direction: column;
+
+		min-width: 0;
+		min-height: 190px;
+
+		padding: 1.4rem;
+
+		color: inherit;
+
+		text-decoration: none;
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 10px;
+
+		box-shadow:
+			0 4px 16px
+			rgba(0, 0, 0, 0.2);
+
+		transition:
+			transform 0.2s ease,
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+
+	.post-card:hover {
+		transform:
+			translateY(-3px);
+
+		background: var(--bg-hover);
+
+		border-color: var(--orange);
+
+		box-shadow:
+			0 8px 22px
+			rgba(0, 0, 0, 0.3);
+	}
+
+
+	.post-meta {
+		display: flex;
+
+		align-items: center;
+
+		flex-wrap: wrap;
+
+		gap: 0.7rem;
+
+		margin-bottom: 0.8rem;
+
+		color: var(--text-muted);
+
+		font-size: 0.75rem;
+	}
+
+
+	.category {
+		padding:
+			0.05rem 0.5rem;
+
+		color: var(--ginkgo);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 999px;
+	}
+
+
+	.post-card h3 {
+		margin:
+			0 0 0.8rem;
+
+		color: var(--text);
+
+		font-size: 1.1rem;
+	}
+
+
+	.post-card p {
+		margin:
+			0 0 1rem;
+
+		color: var(--text-soft);
+
+		font-size: 0.88rem;
+
+		line-height: 1.8;
+	}
+
+
+	.read-more {
+		margin-top: auto;
+
+		color: var(--gold);
+
+		font-size: 0.8rem;
+	}
+
+
+
+	/* Timeline */
+
+	.timeline-area {
+		max-width: 680px;
+
+		padding:
+			1.5rem 0 0.5rem;
+	}
+
+
+	@media (max-width: 850px) {
+
+		.utility-grid {
+			grid-template-columns: 1fr;
+		}
+
+	}
+
+
+	@media (max-width: 700px) {
+
+		.hero {
+			min-height: 280px;
+
+			padding:
+				1rem 0 3rem;
+		}
+
+
+		.hero h1 {
+			font-size: 3.2rem;
+		}
+
+
+		.hero-description {
+			font-size: 1rem;
+		}
+
+
+		.home-section {
+			margin-top: 3.5rem;
+		}
+
+
+		.section-header {
+			align-items: center;
+		}
+
+
+		.section-header h2 {
+			font-size: 1.45rem;
+		}
+
+
+		.post-list {
+			grid-template-columns: 1fr;
+		}
+
+
+		.post-card {
+			min-height: auto;
+
+			padding: 1.2rem;
+		}
+
+
+		.timeline-area {
+			padding-top: 1rem;
+		}
+
+	}
+
+</style>

@@ -1,0 +1,487 @@
+
+:root {
+	/* 背景 */
+	--bg: #090806;
+	--bg-main: #12100c;
+	--bg-card: #1b1711;
+	--bg-hover: #2b2117;
+
+	/* 色 */
+	--maple: #b84a32;
+	--orange: #d97832;
+	--ginkgo: #d9a441;
+	--gold: #edbd62;
+
+	/* 文字 */
+	--text: #f3eadc;
+	--text-soft: #c8b8a0;
+	--text-muted: #927d65;
+
+	/* 枠線 */
+	--border: #3c3023;
+	--border-card: #4a3827;
+}
+
+
+* {
+	box-sizing: border-box;
+
+	scrollbar-color:
+		#62482e
+		#0d0b08;
+
+	scrollbar-width: thin;
+}
+
+
+html {
+	margin: 0;
+	padding: 0;
+
+	background: var(--bg);
+}
+
+
+body {
+	margin: 0;
+
+	min-height: 100vh;
+
+	padding: 2rem 1.5rem;
+
+	font-family:
+		"Zen Kaku Gothic New",
+		"Noto Sans JP",
+		sans-serif;
+
+	line-height: 1.8;
+
+	color: var(--text);
+
+	background: var(--bg);
+}
+
+
+header {
+	width: 100%;
+	max-width: 900px;
+
+	margin: 0 auto;
+
+	display: flex;
+
+	align-items: center;
+
+	justify-content: space-between;
+
+	gap: 2rem;
+
+	position: relative;
+
+	z-index: 10;
+
+	border-bottom:
+		1px solid var(--border);
+}
+
+
+.site-logo {
+	display: flex;
+
+	align-items: center;
+
+	flex-shrink: 0;
+
+	text-decoration: none;
+}
+
+
+.site-logo img {
+	display: block;
+
+	width: 130px;
+	height: auto;
+
+	object-fit: contain;
+
+	transition:
+		transform 0.25s ease,
+		opacity 0.25s ease;
+}
+
+
+.site-logo:hover img {
+	transform:
+		scale(1.03);
+
+	opacity: 0.9;
+}
+
+
+nav {
+	display: flex;
+
+	align-items: center;
+
+	justify-content: flex-end;
+
+	gap: 2rem;
+
+	padding: 0.6rem 0;
+
+	border-bottom: none;
+}
+
+
+nav a {
+	position: relative;
+
+	color: var(--ginkgo);
+
+	text-decoration: none;
+
+	font-family:
+		"Shippori Mincho",
+		"Yu Mincho",
+		"YuMincho",
+		serif;
+
+	font-weight: 500;
+
+	letter-spacing: 0.08em;
+
+	transition:
+		color 0.2s ease,
+		opacity 0.2s ease,
+		text-shadow 0.2s ease;
+}
+
+
+nav a:hover {
+	color: var(--gold);
+
+	opacity: 0.95;
+
+	text-shadow:
+		0 0 8px
+		rgba(217, 164, 65, 0.25);
+}
+
+
+nav a::after {
+	content: "";
+
+	position: absolute;
+
+	left: 50%;
+	bottom: -0.5rem;
+
+	width: 0;
+	height: 2px;
+
+	background:
+		linear-gradient(
+			90deg,
+			var(--maple),
+			var(--orange),
+			var(--ginkgo)
+		);
+
+	transform:
+		translateX(-50%);
+
+	transition:
+		width 0.25s ease;
+}
+
+
+nav a:hover::after {
+	width: 60%;
+}
+
+
+nav a.active {
+	color: var(--gold);
+}
+
+
+nav a.active::after {
+	width: 100%;
+}
+
+
+main {
+	width: 100%;
+	max-width: 900px;
+
+	margin: 1.5rem auto 0;
+
+	padding: 2.5rem;
+
+	position: relative;
+
+	z-index: 10;
+
+	background: transparent;
+
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+
+main::before {
+	content: "";
+
+	display: block;
+
+	width: 70px;
+	height: 2px;
+
+	margin-bottom: 2rem;
+
+	background:
+		linear-gradient(
+			90deg,
+			var(--maple),
+			var(--orange),
+			var(--ginkgo)
+		);
+}
+
+
+h1,
+h2,
+h3 {
+	color: var(--text);
+
+	font-family:
+		"Shippori Mincho",
+		"Yu Mincho",
+		"YuMincho",
+		serif;
+
+	font-weight: 600;
+
+	letter-spacing: 0.1em;
+}
+
+
+h1 {
+	font-size: 2.6rem;
+
+	text-shadow:
+		0 0 10px
+		rgba(217, 164, 65, 0.08);
+}
+
+
+h2 {
+	font-size: 1.5rem;
+}
+
+
+h3 {
+	font-size: 1.1rem;
+}
+
+
+p {
+	color: var(--text-soft);
+}
+
+
+/* =========================
+   リンク
+========================= */
+
+a {
+	color: var(--ginkgo);
+}
+
+
+a:hover {
+	color: var(--gold);
+}
+
+
+button {
+	color: var(--text);
+
+	background: var(--bg-card);
+
+	border:
+		1px solid var(--border-card);
+
+	border-radius: 6px;
+
+	padding:
+		0.6rem 1rem;
+
+	font: inherit;
+
+	cursor: pointer;
+
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+
+button:hover {
+	color: var(--gold);
+
+	background: var(--bg-hover);
+
+	border-color: var(--orange);
+
+	box-shadow:
+		0 0 10px
+		rgba(217, 120, 50, 0.12);
+}
+
+
+input {
+	color: var(--text);
+
+	background: var(--bg-card);
+
+	border:
+		1px solid var(--border-card);
+
+	border-radius: 6px;
+
+	padding:
+		0.65rem 0.8rem;
+
+	font: inherit;
+
+	outline: none;
+
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+
+input::placeholder {
+	color: var(--text-muted);
+}
+
+
+input:focus {
+	border-color: var(--ginkgo);
+
+	box-shadow:
+		0 0 8px
+		rgba(217, 164, 65, 0.15);
+}
+
+
+footer {
+	max-width: 900px;
+
+	margin: 2rem auto 0;
+
+	padding-top: 1rem;
+
+	position: relative;
+
+	z-index: 10;
+
+	font-family:
+		"Shippori Mincho",
+		"Yu Mincho",
+		"YuMincho",
+		serif;
+
+	font-size: 0.85rem;
+
+	color: var(--text-muted);
+
+	border-top:
+		1px solid var(--border);
+}
+
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+	background: #0d0b08;
+}
+
+
+::-webkit-scrollbar-thumb {
+	background: #62482e;
+
+	border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+	background: #8a6338;
+}
+
+
+::selection {
+	color: #fff8eb;
+
+	background: var(--maple);
+}
+
+
+/* スマホ */
+
+@media (max-width: 700px) {
+
+	body {
+		padding: 1rem;
+	}
+
+
+	header {
+		flex-direction: column;
+
+		align-items: flex-start;
+
+		gap: 0.5rem;
+
+		padding-bottom: 1rem;
+	}
+
+
+	.site-logo img {
+		width: 110px;
+	}
+
+
+	nav {
+		width: 100%;
+
+		gap: 1rem;
+
+		padding:
+			0.5rem 0 0;
+
+		flex-wrap: wrap;
+	}
+
+
+	main {
+		padding: 1.5rem;
+
+		margin-top: 1rem;
+	}
+
+
+	h1 {
+		font-size: 2rem;
+	}
+
+}

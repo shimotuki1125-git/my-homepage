@@ -1,0 +1,509 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About">
+
+	<!-- =========================
+	     Header
+	========================= -->
+
+	<section class="about-header">
+
+		<p class="page-label">
+			ABOUT
+		</p>
+
+		<h1>
+			About
+		</h1>
+
+		<p class="intro">
+			このサイトと、書いている人について
+		</p>
+
+	</section>
+
+
+	<!-- =========================
+	     Profile
+	========================= -->
+
+	<section class="about-section">
+
+		<div class="section-heading">
+
+			<p class="section-number">
+				01
+			</p>
+
+			<h2>
+				Profile
+			</h2>
+
+		</div>
+
+
+		<div class="profile-area">
+
+			<!-- プロフィールアイコン -->
+
+			<div class="profile-icon">
+
+				<img
+					src=""
+					alt="アイコン"
+				/>
+
+			</div>
+
+
+			<!-- プロフィール情報 -->
+
+			<div class="profile-list">
+
+				<div class="profile-row">
+
+					<span class="profile-label">
+						Name
+					</span>
+
+					<span class="profile-value">
+						霜月
+					</span>
+
+				</div>
+
+
+				<div class="profile-row">
+
+					<span class="profile-label">
+						University
+					</span>
+
+					<span class="profile-value">
+						国立大学法人　電気通信大学
+					</span>
+
+				</div>
+
+
+				<div class="profile-row">
+
+					<span class="profile-label">
+						Birthday
+					</span>
+
+					<span class="profile-value">
+						11/25
+					</span>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+
+
+	<!-- =========================
+	     About Me
+	========================= -->
+
+	<section class="about-section">
+
+		<div class="section-heading">
+
+			<p class="section-number">
+				02
+			</p>
+
+			<h2>
+				About Me
+			</h2>
+
+		</div>
+
+
+		<div class="text-block">
+
+			<p>
+			国立大学法人 電気通信大学 情報理工学域 III類の霜月です。
+			Twitterを触ってる時間が無駄だと感じているので、HPに拠点を
+			移したいと考えています。卒業までにコンピューターに強くなりたい。
+			</p>
+		
+		</div>
+
+	</section>
+
+
+	<!-- =========================
+	     Interests
+	========================= -->
+
+	<section class="about-section">
+
+		<div class="section-heading">
+
+			<p class="section-number">
+				03
+			</p>
+
+			<h2>
+				Interests
+			</h2>
+
+		</div>
+
+
+		<div class="interest-list">
+
+			<span>
+					tennis
+			</span>
+
+			<span>
+				Web Development
+			</span>
+
+			<span>
+				physics/mathematics
+			</span>
+
+			<span>
+				Suisei Hoshimachi
+			</span>
+
+			<span>
+				illustration
+			</span>
+
+		</div>
+
+	</section>
+
+</Layout>
+
+
+<style>
+
+	.about-header {
+		margin-bottom: 4rem;
+
+		padding-bottom: 2rem;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.page-label {
+		margin:
+			0 0 0.6rem;
+
+		color: var(--orange);
+
+		font-size: 0.7rem;
+
+		letter-spacing: 0.3em;
+	}
+
+
+	.about-header h1 {
+		margin:
+			0 0 1rem;
+
+		color: var(--text);
+
+		font-size:
+			clamp(
+				2.5rem,
+				6vw,
+				4rem
+			);
+
+		font-weight: 500;
+
+		letter-spacing: 0.12em;
+	}
+
+
+	.intro {
+		max-width: 560px;
+
+		margin: 0;
+
+		color: var(--text-soft);
+
+		font-size: 0.9rem;
+
+		line-height: 2;
+	}
+
+
+	.about-section {
+		margin-top: 4.5rem;
+	}
+
+
+	.section-heading {
+		display: flex;
+
+		align-items: baseline;
+
+		gap: 1rem;
+
+		margin-bottom: 1.7rem;
+	}
+
+
+	.section-number {
+		margin: 0;
+
+		color: var(--orange);
+
+		font-family:
+			"Shippori Mincho",
+			"Yu Mincho",
+			serif;
+
+		font-size: 0.7rem;
+
+		letter-spacing: 0.15em;
+	}
+
+
+	.section-heading h2 {
+		margin: 0;
+
+		color: var(--text);
+
+		font-size: 1.45rem;
+
+		font-weight: 500;
+	}
+
+
+	.profile-area {
+		display: grid;
+
+		grid-template-columns:
+			150px minmax(0, 1fr);
+
+		align-items: start;
+
+		gap: 2.5rem;
+	}
+
+
+	.profile-icon {
+		width: 150px;
+		height: 150px;
+
+		padding: 5px;
+
+		background:
+			var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 50%;
+
+		box-shadow:
+			0 5px 18px
+			rgba(0, 0, 0, 0.25);
+
+		transition:
+			transform 0.25s ease,
+			border-color 0.25s ease,
+			box-shadow 0.25s ease;
+	}
+
+
+	.profile-icon:hover {
+		transform:
+			translateY(-3px);
+
+		border-color:
+			var(--ginkgo);
+
+		box-shadow:
+			0 8px 24px
+			rgba(0, 0, 0, 0.32);
+	}
+
+
+	.profile-icon img {
+		display: block;
+
+		width: 100%;
+		height: 100%;
+
+		object-fit: cover;
+
+		border-radius: 50%;
+	}
+
+
+	.profile-list {
+		min-width: 0;
+
+		border-top:
+			1px solid var(--border);
+	}
+
+
+	.profile-row {
+		display: grid;
+
+		grid-template-columns:
+			130px minmax(0, 1fr);
+
+		gap: 1.5rem;
+
+		padding:
+			1.1rem 0;
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.profile-label {
+		color:
+			var(--text-muted);
+
+		font-size:
+			0.75rem;
+
+		letter-spacing:
+			0.08em;
+	}
+
+
+	.profile-value {
+		color:
+			var(--text-soft);
+
+		font-size:
+			0.95rem;
+	}
+
+
+	.text-block {
+		max-width: 680px;
+	}
+
+
+	.text-block p {
+		margin:
+			0 0 1.5rem;
+
+		color:
+			var(--text-soft);
+
+		font-size:
+			0.95rem;
+
+		line-height:
+			2.1;
+	}
+
+
+	.interest-list {
+		display: flex;
+
+		flex-wrap: wrap;
+
+		gap:
+			0.7rem 1.5rem;
+
+		padding:
+			1.3rem 0;
+
+		border-top:
+			1px solid var(--border);
+
+		border-bottom:
+			1px solid var(--border);
+	}
+
+
+	.interest-list span {
+		position: relative;
+
+		padding-left: 1rem;
+
+		color:
+			var(--text-soft);
+
+		font-size:
+			0.85rem;
+	}
+
+
+	.interest-list span::before {
+		content: "◆";
+
+		position: absolute;
+
+		left: 0;
+		top: 0.2em;
+
+		color:
+			var(--ginkgo);
+
+		font-size:
+			0.55em;
+	}
+
+
+	@media (max-width: 700px) {
+
+		.about-header {
+			margin-bottom: 3rem;
+		}
+
+
+		.about-header h1 {
+			font-size: 2.5rem;
+		}
+
+
+		.about-section {
+			margin-top: 3.5rem;
+		}
+
+
+		.profile-area {
+			grid-template-columns: 1fr;
+
+			gap: 1.5rem;
+		}
+
+
+		.profile-icon {
+			width: 120px;
+			height: 120px;
+		}
+
+
+		.profile-row {
+			grid-template-columns: 1fr;
+
+			gap: 0.25rem;
+		}
+
+
+		.interest-list {
+			flex-direction: column;
+
+			gap: 0.8rem;
+		}
+
+	}
+
+</style>

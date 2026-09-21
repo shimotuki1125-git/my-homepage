@@ -1,0 +1,208 @@
+---
+const events = [
+	{
+		date: '2026.09.21',
+		title: '「時雨録」へ',
+		description:
+			'サイト名を「時雨録」に変更し、ロゴや秋・初冬を基調としたデザインを整えました。'
+	},
+	{
+		date: '2026.09.21',
+		title: 'サイトデザインを統一',
+		description:
+			'Blog、Links、About、Worksを、余白と細い罫線を活かした和モダンなデザインに統一しました。'
+	},
+	{
+		date: '2026.09.16',
+		title: 'ホームページを再構成',
+		description:
+			'トップエリア、Latest Posts、Timelineを中心としたシンプルなHomeへ再構成しました。'
+	},
+	{
+		date: '2026.09.15',
+		title: '秋のエフェクトを追加',
+		description:
+			'クリックした場所から紅葉や銀杏、落ち葉が広がり、滑らかに舞い落ちる演出を追加しました。'
+	},
+	{
+		date: '2026.09.14',
+		title: 'ブログ機能を追加',
+		description:
+			'Markdownで記事を管理できるブログを実装し、最新記事表示やカテゴリ絞り込みにも対応しました。'
+	},
+	{
+		date: '2026.09.10',
+		title: 'ホームページ制作開始',
+		description:
+			'Astroを使った個人ホームページの制作を始めました。'
+	}
+];
+---
+
+<div class="timeline">
+
+	{events.map((event) => (
+
+		<div class="timeline-item">
+
+			<div class="timeline-marker"></div>
+
+			<div class="timeline-content">
+
+				<time>
+					{event.date}
+				</time>
+
+				<h3>
+					{event.title}
+				</h3>
+
+				<p>
+					{event.description}
+				</p>
+
+			</div>
+
+		</div>
+
+	))}
+
+</div>
+
+
+<style>
+
+	.timeline {
+		position: relative;
+
+		padding-left: 2rem;
+	}
+
+
+	.timeline::before {
+		content: "";
+
+		position: absolute;
+
+		top: 0;
+		bottom: 0;
+		left: 7px;
+
+		width: 1px;
+
+		background:
+			linear-gradient(
+				to bottom,
+				var(--ginkgo),
+				var(--orange),
+				var(--maple)
+			);
+
+		opacity: 0.65;
+	}
+
+
+	.timeline-item {
+		position: relative;
+
+		padding-bottom: 2.2rem;
+	}
+
+
+	.timeline-item:last-child {
+		padding-bottom: 0;
+	}
+
+
+	.timeline-marker {
+		position: absolute;
+
+		top: 0.45rem;
+		left: -2rem;
+
+		width: 15px;
+		height: 15px;
+
+		background: var(--ginkgo);
+
+		border:
+			3px solid var(--bg-main);
+
+		border-radius: 50%;
+
+		box-shadow:
+			0 0 8px
+			rgba(217, 164, 65, 0.25);
+	}
+
+
+
+	.timeline-item:nth-child(2n)
+	.timeline-marker {
+		background: var(--orange);
+	}
+
+
+	.timeline-item:nth-child(3n)
+	.timeline-marker {
+		background: var(--maple);
+	}
+
+
+	.timeline-content {
+		padding-left: 0.3rem;
+	}
+
+
+	time {
+		display: block;
+
+		margin-bottom: 0.25rem;
+
+		color: var(--text-muted);
+
+		font-size: 0.78rem;
+
+		letter-spacing: 0.08em;
+	}
+
+
+	h3 {
+		margin:
+			0 0 0.4rem;
+
+		color: var(--text);
+
+		font-size: 1.05rem;
+	}
+
+
+	p {
+		margin: 0;
+
+		color: var(--text-soft);
+
+		font-size: 0.9rem;
+
+		line-height: 1.7;
+	}
+
+
+	/* =========================
+	   スマホ
+	========================= */
+
+	@media (max-width: 700px) {
+
+		.timeline {
+			padding-left: 1.7rem;
+		}
+
+
+		.timeline-marker {
+			left: -1.7rem;
+		}
+
+	}
+
+</style>

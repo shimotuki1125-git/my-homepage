@@ -1,0 +1,898 @@
+<section class="weather-card">
+	<h2>Weather</h2>
+
+	<div class="weather-location">
+		<input
+			id="city"
+			type="text"
+			value="Tokyo"
+			placeholder="都市名を入力"
+		/>
+
+		<button id="searchWeather">
+			検索
+		</button>
+	</div>
+
+	<div id="weather">
+		<p>天気を読み込んでいます...</p>
+	</div>
+</section>
+
+
+<script>
+	const cityInput =
+		document.getElementById('city') as HTMLInputElement | null;
+
+	const searchButton =
+		document.getElementById('searchWeather');
+
+	const weatherElement =
+		document.getElementById('weather');
+
+
+	/* =========================
+	   天気データ
+	========================= */
+
+	const weatherIcons: Record<number, string> = {
+		0: '☀️',
+		1: '🌤️',
+		2: '⛅',
+		3: '☁️',
+		45: '🌫️',
+		48: '🌫️',
+		51: '🌧️',
+		53: '🌧️',
+		55: '🌧️',
+		56: '🌧️',
+		57: '🌧️',
+		61: '🌧️',
+		63: '🌧️',
+		65: '🌧️',
+		66: '🌧️',
+		67: '🌧️',
+		71: '❄️',
+		73: '❄️',
+		75: '❄️',
+		77: '❄️',
+		80: '🌦️',
+		81: '🌦️',
+		82: '🌧️',
+		85: '🌨️',
+		86: '🌨️',
+		95: '⛈️',
+		96: '⛈️',
+		99: '⛈️'
+	};
+
+
+	const weatherNames: Record<number, string> = {
+		0: '快晴',
+		1: '晴れ',
+		2: '一部曇り',
+		3: '曇り',
+		45: '霧',
+		48: '霧',
+		51: '小雨',
+		53: '雨',
+		55: '強い雨',
+		56: '凍雨',
+		57: '凍雨',
+		61: '雨',
+		63: '雨',
+		65: '強い雨',
+		66: '凍雨',
+		67: '凍雨',
+		71: '雪',
+		73: '雪',
+		75: '大雪',
+		77: '雪',
+		80: 'にわか雨',
+		81: 'にわか雨',
+		82: '強いにわか雨',
+		85: '雪',
+		86: '大雪',
+		95: '雷雨',
+		96: '雷雨',
+		99: '雷雨'
+	};
+
+
+	const weekdays = [
+		'日',
+		'月',
+		'火',
+		'水',
+		'木',
+		'金',
+		'土'
+	];
+
+
+	function getIcon(code: number) {
+		return weatherIcons[code] ?? '🌡️';
+	}
+
+
+	function getWeatherName(code: number) {
+		return weatherNames[code] ?? '不明';
+	}
+
+
+	/* =========================
+	   天気取得
+	========================= */
+
+	async function getWeather() {
+		if (!cityInput || !weatherElement) return;
+
+		const city = cityInput.value.trim();
+
+		if (!city) return;
+
+		weatherElement.innerHTML =
+			'<p>読み込み中...</p>';
+
+
+		try {
+			/* 都市検索 */
+
+			const geoResponse = await fetch(
+				`https://geocoding-api.open-meteo.com/v1/search` +
+				`?name=${encodeURIComponent(city)}` +
+				`&count=1` +
+				`&language=ja` +
+				`&format=json`
+			);
+
+			const geoData =
+				await geoResponse.json();
+
+
+			if (!geoData.results?.length) {
+				throw new Error('都市が見つかりません');
+			}
+
+
+			const location =
+				geoData.results[0];
+
+
+			/* 天気API */
+
+			const weatherResponse = await fetch(
+				`https://api.open-meteo.com/v1/forecast` +
+					`?latitude=${location.latitude}` +
+					`&longitude=${location.longitude}` +
+					`&current=temperature_2m,weather_code` +
+					`&hourly=temperature_2m,weather_code` +
+					`&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+					`&timezone=auto` +
+					`&forecast_days=7`
+			);
+
+			const data =
+				await weatherResponse.json();
+
+
+			/* 現在時刻 */
+
+			const currentTime =
+				data.current.time;
+
+			const currentDateText =
+				currentTime.slice(0, 10);
+
+			const currentHourText =
+				currentTime.slice(0, 13);
+
+
+			let currentIndex =
+				data.hourly.time.findIndex(
+					(time: string) =>
+						time.slice(0, 13) === currentHourText
+				);
+
+
+			if (currentIndex < 0) {
+				currentIndex = 0;
+			}
+
+
+			/* 現在の3時間前〜21時間後 */
+
+			const startIndex =
+				Math.max(0, currentIndex - 3);
+
+			const endIndex =
+				Math.min(
+					data.hourly.time.length - 1,
+					currentIndex + 21
+				);
+
+
+			/* =========================
+			   時間別予報
+			========================= */
+
+			let hourlyHTML = `
+				<h3 class="weather-title">
+					今日の天気
+				</h3>
+
+				<div
+					class="hourly-scroll"
+					id="hourlyScroll"
+				>
+					<div class="hourly-list">
+			`;
+
+
+			for (
+				let i = startIndex;
+				i <= endIndex;
+				i++
+			) {
+				const time =
+					data.hourly.time[i];
+
+				const dateText =
+					time.slice(0, 10);
+
+				const hour =
+					time.slice(11, 13);
+
+				const code =
+					data.hourly.weather_code[i];
+
+				const temperature =
+					Math.round(
+						data.hourly.temperature_2m[i]
+					);
+
+				const isCurrent =
+					i === currentIndex;
+
+				const dayLabel =
+					dateText === currentDateText
+						? '今日'
+						: '明日';
+
+
+				hourlyHTML += `
+					<div
+						class="hour-item ${
+							isCurrent
+								? 'current-hour'
+								: ''
+						}"
+					>
+						<div class="hour-time">
+							${
+								isCurrent
+									? '<span class="now-label">現在</span>'
+									: ''
+							}
+
+							<span class="day-label">
+								${dayLabel}
+							</span>
+
+							<strong>
+								${Number(hour)}:00
+							</strong>
+						</div>
+
+						<div class="hour-icon">
+							${getIcon(code)}
+						</div>
+
+						<div class="hour-weather">
+							${getWeatherName(code)}
+						</div>
+
+						<div class="hour-temperature">
+							${temperature}℃
+						</div>
+					</div>
+				`;
+			}
+
+
+			hourlyHTML += `
+					</div>
+				</div>
+			`;
+
+
+			/* =========================
+			   週間予報
+			========================= */
+
+			let dailyHTML = `
+				<h3 class="weather-title weekly-title">
+					週間予報
+				</h3>
+
+				<div class="daily-scroll">
+					<div class="daily-list">
+			`;
+
+
+			for (
+				let i = 0;
+				i < data.daily.time.length;
+				i++
+			) {
+				const date =
+					new Date(
+						`${data.daily.time[i]}T00:00:00`
+					);
+
+				const code =
+					data.daily.weather_code[i];
+
+				const max =
+					Math.round(
+						data.daily.temperature_2m_max[i]
+					);
+
+				const min =
+					Math.round(
+						data.daily.temperature_2m_min[i]
+					);
+
+
+				dailyHTML += `
+					<div class="daily-item">
+						<div class="daily-date">
+							${date.getMonth() + 1}/${date.getDate()}
+
+							<span>
+								(${weekdays[date.getDay()]})
+							</span>
+						</div>
+
+						<div class="daily-icon">
+							${getIcon(code)}
+						</div>
+
+						<div class="daily-weather">
+							${getWeatherName(code)}
+						</div>
+
+						<div class="daily-temperature">
+							<span class="max">
+								${max}℃
+							</span>
+
+							<span class="min">
+								${min}℃
+							</span>
+						</div>
+					</div>
+				`;
+			}
+
+
+			dailyHTML += `
+					</div>
+				</div>
+			`;
+
+
+			/* =========================
+			   描画
+			========================= */
+
+			weatherElement.innerHTML = `
+				<div class="weather-city">
+					${location.admin1 ?? location.name}
+				</div>
+
+				${hourlyHTML}
+
+				${dailyHTML}
+			`;
+
+
+			/* 現在時刻を中央へ */
+
+			requestAnimationFrame(() => {
+				const scroll =
+					weatherElement.querySelector(
+						'#hourlyScroll'
+					) as HTMLElement | null;
+
+				const currentItem =
+					weatherElement.querySelector(
+						'.current-hour'
+					) as HTMLElement | null;
+
+
+				if (!scroll || !currentItem) return;
+
+
+				const position =
+					currentItem.offsetLeft
+					-
+					scroll.clientWidth / 2
+					+
+					currentItem.clientWidth / 2;
+
+
+				scroll.scrollTo({
+					left: position,
+					behavior: 'smooth'
+				});
+			});
+
+
+		} catch (error) {
+			console.error(error);
+
+			weatherElement.innerHTML = `
+				<p class="weather-error">
+					天気情報を取得できませんでした。
+				</p>
+			`;
+		}
+	}
+
+
+	/* =========================
+	   イベント
+	========================= */
+
+	searchButton?.addEventListener(
+		'click',
+		getWeather
+	);
+
+
+	cityInput?.addEventListener(
+		'keydown',
+		(event) => {
+			if (event.key === 'Enter') {
+				getWeather();
+			}
+		}
+	);
+
+
+	getWeather();
+</script>
+
+<style>
+	/* =========================
+	   Weather 全体
+	========================= */
+
+	.weather-card {
+		min-width: 0;
+		padding: 28px;
+
+		background: var(--bg-main);
+
+		border:
+			1px solid var(--border);
+
+		border-radius: 8px;
+
+		box-shadow:
+			0 4px 20px
+			rgba(0, 0, 0, 0.4);
+
+		overflow: hidden;
+	}
+
+
+	h2 {
+		margin-top: 0;
+		margin-bottom: 24px;
+
+		color: var(--text);
+	}
+
+
+	/* =========================
+	   都市検索
+	========================= */
+
+	.weather-location {
+		display: flex;
+
+		gap: 10px;
+
+		margin-bottom: 24px;
+
+		min-width: 0;
+	}
+
+
+	input {
+		flex: 1;
+
+		min-width: 0;
+
+		padding: 12px 14px;
+
+		color: var(--text);
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 8px;
+
+		font-size: 1rem;
+
+		outline: none;
+	}
+
+
+	input::placeholder {
+		color: var(--text-muted);
+	}
+
+
+	input:focus {
+		border-color: var(--ginkgo);
+
+		box-shadow:
+			0 0 8px
+			rgba(217, 164, 65, 0.15);
+	}
+
+
+	button {
+		flex-shrink: 0;
+
+		padding: 10px 18px;
+
+		color: var(--text);
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 8px;
+
+		cursor: pointer;
+
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+
+	button:hover {
+		color: var(--gold);
+
+		background: var(--bg-hover);
+
+		border-color: var(--orange);
+	}
+
+
+	/* =========================
+	   見出し
+	========================= */
+
+	:global(.weather-city) {
+		margin-bottom: 22px;
+
+		color: var(--text);
+
+		font-size: 1.3rem;
+
+		font-weight: bold;
+	}
+
+
+	:global(.weather-title) {
+		margin: 22px 0 14px;
+
+		color: var(--ginkgo);
+
+		font-size: 1.1rem;
+	}
+
+
+	:global(.weekly-title) {
+		margin-top: 32px;
+	}
+
+
+	/* =========================
+	   横スクロール
+	========================= */
+
+	:global(.hourly-scroll),
+	:global(.daily-scroll) {
+		width: 100%;
+		max-width: 100%;
+
+		overflow-x: auto;
+		overflow-y: hidden;
+
+		padding:
+			16px 8px 18px;
+
+		box-sizing: border-box;
+
+		-webkit-overflow-scrolling: touch;
+
+		touch-action: pan-x;
+
+		scrollbar-width: thin;
+
+		scrollbar-color:
+			#62482e
+			var(--bg-main);
+	}
+
+
+	:global(.hourly-list),
+	:global(.daily-list) {
+		display: flex;
+
+		flex-direction: row;
+		flex-wrap: nowrap;
+
+		gap: 12px;
+
+		width: max-content;
+		min-width: max-content;
+	}
+
+
+	/* =========================
+	   時間別カード
+	========================= */
+
+	:global(.hour-item) {
+		width: 96px;
+		min-width: 96px;
+
+		flex:
+			0 0 96px;
+
+		padding:
+			16px 8px;
+
+		text-align: center;
+
+		color: var(--text);
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 14px;
+
+		box-shadow:
+			0 3px 10px
+			rgba(0, 0, 0, 0.4);
+
+		transition:
+			transform 0.2s ease,
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+
+	:global(.hour-item:hover) {
+		transform:
+			translateY(-2px);
+
+		border-color: var(--orange);
+	}
+
+
+	/* 現在時刻 */
+
+	:global(.hour-item.current-hour) {
+		background: #241a10;
+
+		border:
+			2px solid var(--ginkgo);
+
+		box-shadow:
+			0 0 18px
+			rgba(217, 164, 65, 0.2);
+	}
+
+
+	:global(.hour-time) {
+		display: flex;
+
+		flex-direction: column;
+
+		align-items: center;
+
+		min-height: 64px;
+	}
+
+
+	:global(.now-label) {
+		color: var(--gold);
+
+		font-size: 0.75rem;
+
+		font-weight: bold;
+
+		letter-spacing: 0.08em;
+	}
+
+
+	:global(.day-label) {
+		color: var(--text-muted);
+
+		font-size: 0.78rem;
+	}
+
+
+	:global(.hour-icon) {
+		margin: 12px 0;
+
+		font-size: 2rem;
+
+		line-height: 1;
+	}
+
+
+	:global(.hour-weather) {
+		color: var(--text-soft);
+
+		font-size: 0.82rem;
+	}
+
+
+	:global(.hour-temperature) {
+		margin-top: 12px;
+
+		color: var(--text);
+
+		font-weight: bold;
+	}
+
+
+	/* =========================
+	   週間予報
+	========================= */
+
+	:global(.daily-item) {
+		width: 120px;
+		min-width: 120px;
+
+		flex:
+			0 0 120px;
+
+		padding:
+			16px 10px;
+
+		text-align: center;
+
+		color: var(--text);
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 14px;
+
+		box-shadow:
+			0 3px 10px
+			rgba(0, 0, 0, 0.4);
+
+		transition:
+			transform 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+
+	:global(.daily-item:hover) {
+		transform:
+			translateY(-2px);
+
+		border-color: var(--orange);
+	}
+
+
+	:global(.daily-date) {
+		color: var(--text);
+
+		font-weight: bold;
+	}
+
+
+	:global(.daily-date span) {
+		color: var(--text-muted);
+
+		font-weight: normal;
+	}
+
+
+	:global(.daily-icon) {
+		margin: 12px 0;
+
+		font-size: 2rem;
+
+		line-height: 1;
+	}
+
+
+	:global(.daily-weather) {
+		color: var(--text-soft);
+
+		font-size: 0.82rem;
+	}
+
+
+	:global(.daily-temperature) {
+		display: flex;
+
+		justify-content: center;
+
+		gap: 8px;
+
+		margin-top: 10px;
+
+		font-size: 0.9rem;
+	}
+
+
+	/* 最高気温 */
+
+	:global(.max) {
+		color: var(--orange);
+
+		font-weight: bold;
+	}
+
+
+	/* 最低気温 */
+
+	:global(.min) {
+		color: #9c9384;
+	}
+
+
+	:global(.weather-error) {
+		color: var(--maple);
+	}
+
+
+	/* =========================
+	   スマホ
+	========================= */
+
+	@media (max-width: 700px) {
+		.weather-card {
+			padding: 20px;
+		}
+
+
+		:global(.hour-item) {
+			width: 86px;
+			min-width: 86px;
+
+			flex-basis: 86px;
+		}
+
+
+		:global(.daily-item) {
+			width: 106px;
+			min-width: 106px;
+
+			flex-basis: 106px;
+		}
+	}
+</style>

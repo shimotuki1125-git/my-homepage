@@ -1,0 +1,385 @@
+<section class="calendar-card">
+
+	<h2>Calendar</h2>
+
+	<div class="calendar-header">
+
+		<button
+			id="prevMonth"
+			aria-label="前の月"
+		>
+			←
+		</button>
+
+		<h3 id="monthTitle"></h3>
+
+		<button
+			id="nextMonth"
+			aria-label="次の月"
+		>
+			→
+		</button>
+
+	</div>
+
+
+	<div class="weekdays">
+		<span>Sun</span>
+		<span>Mon</span>
+		<span>Tue</span>
+		<span>Wed</span>
+		<span>Thu</span>
+		<span>Fri</span>
+		<span>Sat</span>
+	</div>
+
+
+	<div
+		id="calendar"
+		class="calendar"
+	></div>
+
+</section>
+
+
+<script>
+	const calendar =
+		document.getElementById('calendar');
+
+	const monthTitle =
+		document.getElementById('monthTitle');
+
+	const prevMonth =
+		document.getElementById('prevMonth');
+
+	const nextMonth =
+		document.getElementById('nextMonth');
+
+
+	let currentDate =
+		new Date();
+
+
+	function renderCalendar() {
+
+		if (!calendar || !monthTitle) {
+			return;
+		}
+
+
+		const year =
+			currentDate.getFullYear();
+
+		const month =
+			currentDate.getMonth();
+
+
+		monthTitle.textContent =
+			`${year}年 ${month + 1}月`;
+
+
+		calendar.innerHTML = '';
+
+
+		/* 月初の曜日 */
+
+		const firstDay =
+			new Date(
+				year,
+				month,
+				1
+			).getDay();
+
+
+		/* 月末の日付 */
+
+		const lastDate =
+			new Date(
+				year,
+				month + 1,
+				0
+			).getDate();
+
+
+		const today =
+			new Date();
+
+
+		/* =========================
+		   月初の空白
+		========================= */
+
+		for (
+			let i = 0;
+			i < firstDay;
+			i++
+		) {
+
+			const empty =
+				document.createElement('div');
+
+			empty.className =
+				'day empty';
+
+			calendar.appendChild(
+				empty
+			);
+		}
+
+
+		/* =========================
+		   日付
+		========================= */
+
+		for (
+			let day = 1;
+			day <= lastDate;
+			day++
+		) {
+
+			const element =
+				document.createElement('div');
+
+
+			element.className =
+				'day';
+
+
+			element.textContent =
+				String(day);
+
+
+			const isToday =
+				year === today.getFullYear() &&
+				month === today.getMonth() &&
+				day === today.getDate();
+
+
+			if (isToday) {
+
+				element.classList.add(
+					'today'
+				);
+
+			}
+
+
+			calendar.appendChild(
+				element
+			);
+		}
+	}
+
+
+	/* =========================
+	   前の月
+	========================= */
+
+	prevMonth?.addEventListener(
+		'click',
+		() => {
+
+			currentDate.setMonth(
+				currentDate.getMonth() - 1
+			);
+
+			renderCalendar();
+
+		}
+	);
+
+
+	/* =========================
+	   次の月
+	========================= */
+
+	nextMonth?.addEventListener(
+		'click',
+		() => {
+
+			currentDate.setMonth(
+				currentDate.getMonth() + 1
+			);
+
+			renderCalendar();
+
+		}
+	);
+
+
+	renderCalendar();
+</script>
+
+<style>
+	/* =========================
+	   カレンダー全体
+	========================= */
+
+	.calendar-card {
+		padding: 28px;
+
+		background: var(--bg-main);
+
+		border:
+			1px solid var(--border);
+
+		border-radius: 8px;
+
+		box-shadow:
+			0 4px 20px
+			rgba(0, 0, 0, 0.35);
+	}
+
+
+	h2 {
+		margin-top: 0;
+		margin-bottom: 24px;
+
+		color: var(--text);
+	}
+
+
+	/* =========================
+	   月切り替え
+	========================= */
+
+	.calendar-header {
+		display: flex;
+
+		align-items: center;
+
+		justify-content: space-between;
+	}
+
+
+	.calendar-header h3 {
+		margin: 0;
+
+		color: var(--text);
+	}
+
+
+	button {
+		padding: 8px 12px;
+
+		color: var(--text);
+
+		background: var(--bg-card);
+
+		border:
+			1px solid var(--border-card);
+
+		border-radius: 6px;
+
+		cursor: pointer;
+
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+
+	button:hover {
+		color: var(--gold);
+
+		background: var(--bg-hover);
+
+		border-color: var(--orange);
+
+		box-shadow:
+			0 0 10px
+			rgba(217, 120, 50, 0.12);
+	}
+
+
+	/* =========================
+	   カレンダー
+	========================= */
+
+	.weekdays,
+	.calendar {
+		display: grid;
+
+		grid-template-columns:
+			repeat(7, 1fr);
+
+		text-align: center;
+	}
+
+
+	.weekdays {
+		margin-top: 20px;
+		margin-bottom: 8px;
+
+		color: var(--text-muted);
+
+		font-size: 0.8rem;
+	}
+
+
+	/*
+	 * JavaScriptで生成するので
+	 * :global() が必要
+	 */
+
+	:global(.day) {
+		padding: 12px 4px;
+
+		color: var(--text);
+
+		border-radius: 8px;
+
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+
+	:global(.day:not(.empty):hover) {
+		color: var(--gold);
+
+		background: var(--bg-hover);
+	}
+
+
+	/* 今日 */
+
+	:global(.day.today) {
+		color: #fff8eb;
+
+		background: var(--maple);
+
+		font-weight: bold;
+
+		border-radius: 50%;
+
+		box-shadow:
+			0 0 14px
+			rgba(184, 74, 50, 0.35);
+	}
+
+
+	:global(.day.empty) {
+		visibility: hidden;
+	}
+
+
+	/* =========================
+	   スマホ
+	========================= */
+
+	@media (max-width: 700px) {
+		.calendar-card {
+			padding: 20px;
+		}
+
+
+		:global(.day) {
+			padding:
+				10px 2px;
+		}
+	}
+</style>
