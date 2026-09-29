@@ -27,6 +27,8 @@ reviewも兼ねているので27~生の方は参考になれば幸いです。
 
 ## 時間割
 
+所属はIII類10クラスです。
+
 ![NEXUSより](./timetable_1790656610700.png)
 
 <span style="color: #d4d6dc;">本当にNEXUSは便利 → https://nexusforuec.team-bookmark.com/ </span>
